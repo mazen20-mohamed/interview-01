@@ -34,16 +34,26 @@ public class ProductService {
             throw new BadRequestException("Query Param is missing.");
         }
 
-        AtomicReference<Double> maxDiscount = new AtomicReference<>(Double.MIN_VALUE);
-        DoubleAdder totalPrice = new DoubleAdder();
-        AtomicInteger count = new AtomicInteger();
-
-
         Map<String, Comparator<ProductResponseDto>> comparators = Map.of(
                 "price", Comparator.comparing(ProductResponseDto::price),
                 "rating", Comparator.comparing(ProductResponseDto::rating),
                 "discount", Comparator.comparing(ProductResponseDto::discountPercentage)
         );
+
+        if(comparators.containsKey(sortBy)){
+            throw new BadRequestException("Invalid sortBy value");
+        }
+        if(minPrice < 0){
+            throw new BadRequestException("minPrice cannot be less than 0");
+        }
+
+
+
+        AtomicReference<Double> maxDiscount = new AtomicReference<>(Double.MIN_VALUE);
+        DoubleAdder totalPrice = new DoubleAdder();
+        AtomicInteger count = new AtomicInteger();
+
+
 
         Comparator<ProductResponseDto> comparator = comparators.get(sortBy.toLowerCase());
 
